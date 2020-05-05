@@ -81,7 +81,13 @@ namespace OpenBlog.Web
             services.AddRouting(options => options.LowercaseUrls = true);
 
             services.AddControllersWithViews()
-                .AddFluentValidation();
+                .AddFluentValidation(config =>
+                    {
+                        var scanAssemblies = AppDomain.CurrentDomain.GetAssemblies()
+                            .Where(x => x.FullName != null && x.FullName.StartsWith("OpenBlog"));
+                        config.RegisterValidatorsFromAssemblies(scanAssemblies);
+                    }
+                );
 
             #endregion
 
@@ -192,7 +198,7 @@ namespace OpenBlog.Web
                 endpoints.MapDynamicControllerRoute<BloggerTransformer>("blog/{year}/{month}/{*slug}");
                 endpoints.MapControllerRoute(name: "MyArea", pattern: "{area:exists}/{controller=Home}/{action=Index}");
                 endpoints.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
-                //endpoints.MapDynamicControllerRoute<GenericPageTransformer>("{slug}");
+                endpoints.MapDynamicControllerRoute<GenericPageTransformer>("{slug}");
             });
 
             app.UseMulitSpa(spaBuilder =>
@@ -200,7 +206,7 @@ namespace OpenBlog.Web
                 spaBuilder.Options.PublicPath = "/profile";
                 spaBuilder.Options.DefaultPageStaticFileOptions =
                     new BlazorStaticFileOptions(spaBuilder.Options.PublicPath);
-                
+
                 if (env.IsDevelopment())
                 {
                     spaBuilder.Options.SourcePath = "../OpenBlog.UserCenterWeb";
