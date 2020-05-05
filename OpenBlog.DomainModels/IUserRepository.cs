@@ -4,7 +4,7 @@ namespace OpenBlog.DomainModels
 {
     public interface IUserRepository
     {
-        Task<string> CreateUserAsync(User user);
+        Task<string> RegistReader(User user);
         Task<User> GetUserByEmail(string email);
         Task<User> GetUser(string userId);
         Task<bool> IsSystemAdminInited();

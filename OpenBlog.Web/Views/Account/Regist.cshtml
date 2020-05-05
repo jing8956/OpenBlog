@@ -1,0 +1,53 @@
+﻿@model RegistViewModel
+@{
+    ViewData["Title"] = "User Register";
+}
+<div class="row justify-content-md-center">
+    <div class="col-md-auto">
+        <form asp-controller="Account" asp-action="Regist" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label for="Emial" class="control-label">邮箱</label>
+                <input asp-for="Email" class="form-control" required/>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="DisplayName" class="control-label">昵称</label>
+                <input asp-for="DisplayName" class="form-control" required/>
+                <span asp-validation-for="DisplayName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="Password" class="control-label">密码</label>
+                <input id="pass" asp-for="Password" class="form-control" type="password" required/>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">确认密码</label>
+                <input id="repass" type="password" class="form-control" onchange="checkpas();" required/>
+                <span  id="repassSpan" class="text-danger"></span>
+            </div>
+            <input type="submit" class="btn btn-primary" value="Sign Up" onclick="checkpas2();"/>
+        </form>
+    </div>
+</div>
+
+<script>
+    function checkpas() {
+        var pas1 = $("#pass").val();
+        var pas2 = $("#repass").val();
+        if (pas1 == pas2) {
+            $("#repassSpan").html("");
+        }
+        else {
+            $("#repassSpan").html("两次密码不相同。");
+        }
+    }
+    function checkpas2() {
+        var pas1 = $("#pass").val();
+        var pas2 = $("#repass").val();
+        if (pas1 != pas2) {
+            $("#repassSpan").html("两次密码不相同。");
+            return false;
+        }
+    }
+</script>

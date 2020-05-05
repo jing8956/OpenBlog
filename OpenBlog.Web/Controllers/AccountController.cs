@@ -103,5 +103,35 @@ namespace OpenBlog.Web.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToRoute("HomePage");
         }
+
+        [HttpGet, AllowAnonymous]
+        public IActionResult Regist() => View();
+
+        [HttpPost, ActionName("Regist")]
+        public async Task<IActionResult> RegistPost(RegistViewModel registViewModel, 
+            [FromServices] IEncryptionService encryptionService)
+        {
+            if (!ModelState.IsValid) return View();
+
+            var user = await _userRepository.GetUserByEmail(registViewModel.Email);
+            if (user != null)
+            {
+                ErrorNotification("该邮箱已被注册");
+                ModelState.AddModelError("", "该邮箱已被注册");
+                return View();
+            }
+
+            user = new User()
+            {
+                Email = registViewModel.Email,
+                DisplayName = registViewModel.DisplayName,
+                PasswordSalt = encryptionService.CreateSaltKey(20)
+            };
+            user.PasswordHash = encryptionService.CreatePasswordHash(registViewModel.Password, user.PasswordSalt, "SHA256");
+
+            await _userRepository.RegistReader(user);
+
+            return RedirectToAction("Login");
+        }
     }
 }

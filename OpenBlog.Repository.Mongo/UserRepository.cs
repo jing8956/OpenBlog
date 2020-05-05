@@ -22,9 +22,10 @@ namespace OpenBlog.Repository.Mongo
             _userRep = userRep;
         }
 
-        public async Task<string> CreateUserAsync(User user)
+        public async Task<string> RegistReader(User user)
         {
             var userEntity = _mapper.Map<UserEntity>(user);
+            userEntity.UserType = UserType.Reader;
             await _userRep.AddAsync(userEntity);
             return userEntity.Sysid.ToString();
         }
